@@ -12,11 +12,17 @@
  * attribution is appreciated.
  */
 
-typedef double scalar;
+typedef float scalar;
 
-extern void sino_init( void );
-extern void sino_exit( void );
+extern void sino_init();
+extern void sino_exit();
 extern scalar sino_2d( scalar xin, scalar yin );
 extern scalar sino_3d( scalar xin, scalar yin, scalar zin );
 extern scalar sino_4d( scalar x, scalar y, scalar z, scalar w );
 
+// four octave versions.
+extern scalar sino_2d_4o( scalar xin, scalar yin );
+extern scalar sino_3d_4o( scalar xin, scalar yin, scalar zin );
+
+extern int* perm;
+extern int* permMod12;

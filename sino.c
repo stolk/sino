@@ -11,8 +11,18 @@
  * Stefan Gustavson. You may use it as you see fit, but
  * attribution is appreciated.
  */
+
+// NOT FIXING THIS NOW:
+#pragma clang diagnostic ignored "-Wconversion"
+#pragma clang diagnostic ignored "-Wdouble-promotion"
+
+#if defined(_MSC_VER) && !defined(__clang__)
+#	define __inline__ __inline
+#endif
+
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "sino.h"
 
@@ -41,7 +51,7 @@ static Grad grad4[ 32 ] =
 };
 
 
-static short singletable[] = 
+static int singletable[] = 
 {
   151,160,137,91,90,15,
   131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
@@ -58,20 +68,21 @@ static short singletable[] =
   138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
 };
 
-static short* perm;
-static short* permMod12;
+int* perm;
+int* permMod12;
 
 
 void sino_init( void )
 {
 	// To remove the need for index wrapping, double the permutation table length
-	perm      = (short*) malloc( sizeof(short) * 512 );
-	permMod12 = (short*) malloc( sizeof(short) * 512 );
+	perm      = (int*) malloc( sizeof(int) * 512 );
+	permMod12 = (int*) malloc( sizeof(int) * 512 );
 	for( int i=0; i<512; i++ )
 	{
 		perm[i] = singletable[ i & 255 ];
-		permMod12[ i ] = (short) ( perm[ i ] % 12 );
+		permMod12[ i ] = (int) ( perm[ i ] % 12 );
 	}
+	fprintf( stderr, "permutation tables have been set up.\n" );
 }
 
 void sino_exit( void )
@@ -368,5 +379,51 @@ scalar sino_4d( scalar x, scalar y, scalar z, scalar w )
     }
     // Sum up and scale the result to cover the range [-1,1]
     return 27.0 * ( n0 + n1 + n2 + n3 + n4 );
+}
+
+
+// four octave version
+scalar sino_2d_4o( scalar x, scalar y )
+{
+	// Set the frequencies and amplitudes for the four octaves.
+	const float f0 = 1.0f;
+	const float f1 = 2.0f;
+	const float f2 = 4.0f;
+	const float f3 = 8.0f;
+	const float a0 = 1.0f;
+	const float a1 = 0.5f;
+	const float a2 = 0.25f;
+	const float a3 = 0.125f;
+
+	const scalar v0 = a0 * sino_2d( x * f0 , y * f0 );
+	const scalar v1 = a1 * sino_2d( x * f1 , y * f1 );
+	const scalar v2 = a2 * sino_2d( x * f2 , y * f2 );
+	const scalar v3 = a3 * sino_2d( x * f3 , y * f3 );
+	const scalar v = ( v0 + v1 + v2 + v3 ); 		// -1.875 .. 1.875
+	const scalar sample = v / 1.875f;
+	return sample;
+}
+
+
+// four octave version
+scalar sino_3d_4o( scalar x, scalar y, scalar z )
+{
+	// Set the frequencies and amplitudes for the four octaves.
+	const float f0 = 1.0f;
+	const float f1 = 2.0f;
+	const float f2 = 4.0f;
+	const float f3 = 8.0f;
+	const float a0 = 1.0f;
+	const float a1 = 0.5f;
+	const float a2 = 0.25f;
+	const float a3 = 0.125f;
+
+	const scalar v0 = a0 * sino_3d( x * f0 , y * f0, z * f0 );
+	const scalar v1 = a1 * sino_3d( x * f1 , y * f1, z * f1 );
+	const scalar v2 = a2 * sino_3d( x * f2 , y * f2, z * f2 );
+	const scalar v3 = a3 * sino_3d( x * f3 , y * f3, z * f3 );
+	const scalar v = ( v0 + v1 + v2 + v3 ); 		// -1.875 .. 1.875
+	const scalar sample = v / 1.875f;
+	return sample;
 }
 
