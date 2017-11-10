@@ -12,6 +12,10 @@
  * attribution is appreciated.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef float scalar;
 
 extern void sino_init();
@@ -26,3 +30,8 @@ extern scalar sino_3d_4o( scalar xin, scalar yin, scalar zin );
 
 extern int* perm;
 extern int* permMod12;
+
+#ifdef __cplusplus
+}
+#endif
+
