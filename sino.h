@@ -16,7 +16,11 @@
 extern "C" {
 #endif
 
+#if defined(USEDOUBLES)
+typedef double scalar;
+#else
 typedef float scalar;
+#endif
 
 extern void sino_init();
 extern void sino_exit();

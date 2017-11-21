@@ -94,12 +94,21 @@ void sino_exit( void )
 }
 
 // Skewing and unskewing factors for 2, 3, and 4 dimensions
+#if defined( USEDOUBLES )
 #define F2	0.3660254037844386	// 0.5*(Math.sqrt(3.0)-1.0);
 #define G2	0.21132486540518713	// (3.0-Math.sqrt(3.0))/6.0;
 #define F3	0.3333333333333333	// 1.0/3.0;
 #define G3	0.16666666666666666	// 1.0/6.0;
 #define F4	0.30901699437494745	// (Math.sqrt(5.0)-1.0)/4.0;
 #define G4	0.1381966011250105	// (5.0-Math.sqrt(5.0))/20.0;
+#else
+#define F2	0.3660254037844386f	// 0.5*(Math.sqrt(3.0)-1.0);
+#define G2	0.21132486540518713f	// (3.0-Math.sqrt(3.0))/6.0;
+#define F3	0.3333333333333333f	// 1.0/3.0;
+#define G3	0.16666666666666666f	// 1.0/6.0;
+#define F4	0.30901699437494745f	// (Math.sqrt(5.0)-1.0)/4.0;
+#define G4	0.1381966011250105f	// (5.0-Math.sqrt(5.0))/20.0;
+#endif
 
 
 static __inline__ scalar dot2( Grad g, scalar x, scalar y )
@@ -149,8 +158,8 @@ scalar sino_2d( scalar xin, scalar yin )
     // c = (3-sqrt(3))/6
     scalar x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed coords
     scalar y1 = y0 - j1 + G2;
-    scalar x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x,y) unskewed coords
-    scalar y2 = y0 - 1.0 + 2.0 * G2;
+    scalar x2 = x0 - 1.0f + 2.0f * G2; // Offsets for last corner in (x,y) unskewed coords
+    scalar y2 = y0 - 1.0f + 2.0f * G2;
     // Work out the hashed gradient indices of the three simplex corners
     int ii = i & 255;
     int jj = j & 255;
@@ -158,27 +167,27 @@ scalar sino_2d( scalar xin, scalar yin )
     int gi1 = permMod12[ ii+i1+perm[jj+j1] ];
     int gi2 = permMod12[ ii+1+perm[jj+1] ];
     // Calculate the contribution from the three corners
-    scalar t0 = 0.5 - x0*x0-y0*y0;
-    if(t0<0) n0 = 0.0;
+    scalar t0 = 0.5f - x0*x0-y0*y0;
+    if(t0<0) n0 = 0.0f;
     else {
       t0 *= t0;
       n0 = t0 * t0 * dot2( grad3[gi0], x0, y0 );  // (x,y) of grad3 used for 2D gradient
     }
-    scalar t1 = 0.5 - x1*x1-y1*y1;
-    if(t1<0) n1 = 0.0;
+    scalar t1 = 0.5f - x1*x1-y1*y1;
+    if(t1<0) n1 = 0.0f;
     else {
       t1 *= t1;
       n1 = t1 * t1 * dot2( grad3[gi1], x1, y1 );
     }
-    scalar t2 = 0.5 - x2*x2-y2*y2;
-    if(t2<0) n2 = 0.0;
+    scalar t2 = 0.5f - x2*x2-y2*y2;
+    if(t2<0) n2 = 0.0f;
     else {
       t2 *= t2;
       n2 = t2 * t2 * dot2( grad3[gi2], x2, y2 );
     }
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to return values in the interval [-1,1].
-    return 70.0 * ( n0 + n1 + n2 );
+    return 70.0f * ( n0 + n1 + n2 );
 }
 
 
@@ -219,12 +228,12 @@ scalar sino_3d( scalar xin, scalar yin, scalar zin )
     scalar x1 = x0 - i1 + G3; // Offsets for second corner in (x,y,z) coords
     scalar y1 = y0 - j1 + G3;
     scalar z1 = z0 - k1 + G3;
-    scalar x2 = x0 - i2 + 2.0*G3; // Offsets for third corner in (x,y,z) coords
-    scalar y2 = y0 - j2 + 2.0*G3;
-    scalar z2 = z0 - k2 + 2.0*G3;
-    scalar x3 = x0 - 1.0 + 3.0*G3; // Offsets for last corner in (x,y,z) coords
-    scalar y3 = y0 - 1.0 + 3.0*G3;
-    scalar z3 = z0 - 1.0 + 3.0*G3;
+    scalar x2 = x0 - i2 + 2.0f*G3; // Offsets for third corner in (x,y,z) coords
+    scalar y2 = y0 - j2 + 2.0f*G3;
+    scalar z2 = z0 - k2 + 2.0f*G3;
+    scalar x3 = x0 - 1.0f + 3.0f*G3; // Offsets for last corner in (x,y,z) coords
+    scalar y3 = y0 - 1.0f + 3.0f*G3;
+    scalar z3 = z0 - 1.0f + 3.0f*G3;
     // Work out the hashed gradient indices of the four simplex corners
     int ii = i & 255;
     int jj = j & 255;
@@ -234,33 +243,33 @@ scalar sino_3d( scalar xin, scalar yin, scalar zin )
     int gi2 = permMod12[ii+i2+perm[jj+j2+perm[kk+k2]]];
     int gi3 = permMod12[ii+1+perm[jj+1+perm[kk+1]]];
     // Calculate the contribution from the four corners
-    scalar t0 = 0.6 - x0*x0 - y0*y0 - z0*z0;
-    if(t0<0) n0 = 0.0;
+    scalar t0 = 0.6f - x0*x0 - y0*y0 - z0*z0;
+    if(t0<0) n0 = 0.0f;
     else {
       t0 *= t0;
       n0 = t0 * t0 * dot3(grad3[gi0], x0, y0, z0);
     }
-    scalar t1 = 0.6 - x1*x1 - y1*y1 - z1*z1;
-    if(t1<0) n1 = 0.0;
+    scalar t1 = 0.6f - x1*x1 - y1*y1 - z1*z1;
+    if(t1<0) n1 = 0.0f;
     else {
       t1 *= t1;
       n1 = t1 * t1 * dot3(grad3[gi1], x1, y1, z1);
     }
-    scalar t2 = 0.6 - x2*x2 - y2*y2 - z2*z2;
-    if(t2<0) n2 = 0.0;
+    scalar t2 = 0.6f - x2*x2 - y2*y2 - z2*z2;
+    if(t2<0) n2 = 0.0f;
     else {
       t2 *= t2;
       n2 = t2 * t2 * dot3(grad3[gi2], x2, y2, z2);
     }
-    scalar t3 = 0.6 - x3*x3 - y3*y3 - z3*z3;
-    if(t3<0) n3 = 0.0;
+    scalar t3 = 0.6f - x3*x3 - y3*y3 - z3*z3;
+    if(t3<0) n3 = 0.0f;
     else {
       t3 *= t3;
       n3 = t3 * t3 * dot3(grad3[gi3], x3, y3, z3);
     }
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to stay just inside [-1,1]
-    return 32.0 * ( n0 + n1 + n2 + n3 );
+    return 32.0f * ( n0 + n1 + n2 + n3 );
 }
 
 
@@ -324,18 +333,18 @@ scalar sino_4d( scalar x, scalar y, scalar z, scalar w )
     scalar y1 = y0 - j1 + G4;
     scalar z1 = z0 - k1 + G4;
     scalar w1 = w0 - l1 + G4;
-    scalar x2 = x0 - i2 + 2.0*G4; // Offsets for third corner in (x,y,z,w) coords
-    scalar y2 = y0 - j2 + 2.0*G4;
-    scalar z2 = z0 - k2 + 2.0*G4;
-    scalar w2 = w0 - l2 + 2.0*G4;
-    scalar x3 = x0 - i3 + 3.0*G4; // Offsets for fourth corner in (x,y,z,w) coords
-    scalar y3 = y0 - j3 + 3.0*G4;
-    scalar z3 = z0 - k3 + 3.0*G4;
-    scalar w3 = w0 - l3 + 3.0*G4;
-    scalar x4 = x0 - 1.0 + 4.0*G4; // Offsets for last corner in (x,y,z,w) coords
-    scalar y4 = y0 - 1.0 + 4.0*G4;
-    scalar z4 = z0 - 1.0 + 4.0*G4;
-    scalar w4 = w0 - 1.0 + 4.0*G4;
+    scalar x2 = x0 - i2 + 2.0f*G4; // Offsets for third corner in (x,y,z,w) coords
+    scalar y2 = y0 - j2 + 2.0f*G4;
+    scalar z2 = z0 - k2 + 2.0f*G4;
+    scalar w2 = w0 - l2 + 2.0f*G4;
+    scalar x3 = x0 - i3 + 3.0f*G4; // Offsets for fourth corner in (x,y,z,w) coords
+    scalar y3 = y0 - j3 + 3.0f*G4;
+    scalar z3 = z0 - k3 + 3.0f*G4;
+    scalar w3 = w0 - l3 + 3.0f*G4;
+    scalar x4 = x0 - 1.0f + 4.0f*G4; // Offsets for last corner in (x,y,z,w) coords
+    scalar y4 = y0 - 1.0f + 4.0f*G4;
+    scalar z4 = z0 - 1.0f + 4.0f*G4;
+    scalar w4 = w0 - 1.0f + 4.0f*G4;
     // Work out the hashed gradient indices of the five simplex corners
     int ii = i & 255;
     int jj = j & 255;
@@ -347,38 +356,38 @@ scalar sino_4d( scalar x, scalar y, scalar z, scalar w )
     int gi3 = perm[ ii+i3+perm[jj+j3+perm[kk+k3+perm[ll+l3]]] ] % 32;
     int gi4 = perm[ ii+1+perm[jj+1+perm[kk+1+perm[ll+1]]] ] % 32;
     // Calculate the contribution from the five corners
-    scalar t0 = 0.6 - x0*x0 - y0*y0 - z0*z0 - w0*w0;
-    if(t0<0) n0 = 0.0;
+    scalar t0 = 0.6f - x0*x0 - y0*y0 - z0*z0 - w0*w0;
+    if(t0<0) n0 = 0.0f;
     else {
       t0 *= t0;
       n0 = t0 * t0 * dot4(grad4[gi0], x0, y0, z0, w0);
     }
-   scalar t1 = 0.6 - x1*x1 - y1*y1 - z1*z1 - w1*w1;
-    if(t1<0) n1 = 0.0;
+   scalar t1 = 0.6f - x1*x1 - y1*y1 - z1*z1 - w1*w1;
+    if(t1<0) n1 = 0.0f;
     else {
       t1 *= t1;
       n1 = t1 * t1 * dot4(grad4[gi1], x1, y1, z1, w1);
     }
-   scalar t2 = 0.6 - x2*x2 - y2*y2 - z2*z2 - w2*w2;
-    if(t2<0) n2 = 0.0;
+   scalar t2 = 0.6f - x2*x2 - y2*y2 - z2*z2 - w2*w2;
+    if(t2<0) n2 = 0.0f;
     else {
       t2 *= t2;
       n2 = t2 * t2 * dot4(grad4[gi2], x2, y2, z2, w2);
     }
-   scalar t3 = 0.6 - x3*x3 - y3*y3 - z3*z3 - w3*w3;
-    if(t3<0) n3 = 0.0;
+   scalar t3 = 0.6f - x3*x3 - y3*y3 - z3*z3 - w3*w3;
+    if(t3<0) n3 = 0.0f;
     else {
       t3 *= t3;
       n3 = t3 * t3 * dot4(grad4[gi3], x3, y3, z3, w3);
     }
-   scalar t4 = 0.6 - x4*x4 - y4*y4 - z4*z4 - w4*w4;
-    if(t4<0) n4 = 0.0;
+   scalar t4 = 0.6f - x4*x4 - y4*y4 - z4*z4 - w4*w4;
+    if(t4<0) n4 = 0.0f;
     else {
       t4 *= t4;
       n4 = t4 * t4 * dot4(grad4[gi4], x4, y4, z4, w4);
     }
     // Sum up and scale the result to cover the range [-1,1]
-    return 27.0 * ( n0 + n1 + n2 + n3 + n4 );
+    return 27.0f * ( n0 + n1 + n2 + n3 + n4 );
 }
 
 
