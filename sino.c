@@ -12,10 +12,6 @@
  * attribution is appreciated.
  */
 
-// NOT FIXING THIS NOW:
-#pragma clang diagnostic ignored "-Wconversion"
-#pragma clang diagnostic ignored "-Wdouble-promotion"
-
 #if defined(_MSC_VER) && !defined(__clang__)
 #	define __inline__ __inline
 #endif

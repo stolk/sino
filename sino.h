@@ -22,8 +22,8 @@ typedef double scalar;
 typedef float scalar;
 #endif
 
-extern void sino_init();
-extern void sino_exit();
+extern void sino_init( void );
+extern void sino_exit( void );
 extern scalar sino_2d( scalar xin, scalar yin );
 extern scalar sino_3d( scalar xin, scalar yin, scalar zin );
 extern scalar sino_4d( scalar x, scalar y, scalar z, scalar w );

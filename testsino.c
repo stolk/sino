@@ -4,7 +4,10 @@
 #include <assert.h>
 
 #include "sino.h"
-#include "write_pgm.h"
+
+#if !defined(BENCHMARK)
+#	include "write_pgm.h"
+#endif
 
 
 static void do_frame( int nr, scalar*im, int sz )
@@ -38,7 +41,8 @@ int main( int argc, char* argv[] )
 	assert( sz > 0 );
 	sino_init();
 
-	scalar* im = (scalar*) malloc( sz * sz * sizeof( scalar ) );
+	const size_t datasz = ( size_t ) ( sz * sz ) * sizeof( scalar );
+	scalar* im = (scalar*) malloc( datasz );
 
 	for ( int frame=0; frame<sz; ++frame )
 	{
