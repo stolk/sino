@@ -147,8 +147,14 @@ scalar sino_2d( scalar xin, scalar yin )
     // For the 2D case, the simplex shape is an equilateral triangle.
     // Determine which simplex we are in.
     int i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords
-    if( x0>y0 ) { i1=1; j1=0; } // lower triangle, XY order: (0,0)->(1,0)->(1,1)
-    else { i1=0; j1=1; }      // upper triangle, YX order: (0,0)->(0,1)->(1,1)
+    if ( x0>y0 )
+    {
+      i1=1; j1=0; // lower triangle, XY order: (0,0)->(1,0)->(1,1)
+    }
+    else
+    {
+      i1=0; j1=1; // upper triangle, YX order: (0,0)->(0,1)->(1,1)
+    }
     // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
     // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
     // c = (3-sqrt(3))/6
@@ -164,19 +170,22 @@ scalar sino_2d( scalar xin, scalar yin )
     int gi2 = permMod12[ ii+1+perm[jj+1] ];
     // Calculate the contribution from the three corners
     scalar t0 = 0.5f - x0*x0-y0*y0;
-    if(t0<0) n0 = 0.0f;
+    if (t0<0)
+      n0 = 0.0f;
     else {
       t0 *= t0;
       n0 = t0 * t0 * dot2( grad3[gi0], x0, y0 );  // (x,y) of grad3 used for 2D gradient
     }
     scalar t1 = 0.5f - x1*x1-y1*y1;
-    if(t1<0) n1 = 0.0f;
+    if (t1<0)
+      n1 = 0.0f;
     else {
       t1 *= t1;
       n1 = t1 * t1 * dot2( grad3[gi1], x1, y1 );
     }
     scalar t2 = 0.5f - x2*x2-y2*y2;
-    if(t2<0) n2 = 0.0f;
+    if (t2<0)
+      n2 = 0.0f;
     else {
       t2 *= t2;
       n2 = t2 * t2 * dot2( grad3[gi2], x2, y2 );
@@ -189,7 +198,6 @@ scalar sino_2d( scalar xin, scalar yin )
 
 scalar sino_3d( scalar xin, scalar yin, scalar zin )
 {
-    scalar n0, n1, n2, n3; // Noise contributions from the four corners
     // Skew the input space to determine which simplex cell we're in
     scalar s = ( xin+yin+zin )*F3; // Very nice and simple skew factor for 3D
     int i = fastfloor( xin+s );
@@ -206,16 +214,37 @@ scalar sino_3d( scalar xin, scalar yin, scalar zin )
     // Determine which simplex we are in.
     int i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords
     int i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords
-    if(x0>=y0) {
-      if(y0>=z0)
-        { i1=1; j1=0; k1=0; i2=1; j2=1; k2=0; } // X Y Z order
-        else if(x0>=z0) { i1=1; j1=0; k1=0; i2=1; j2=0; k2=1; } // X Z Y order
-        else { i1=0; j1=0; k1=1; i2=1; j2=0; k2=1; } // Z X Y order
+    if (x0>=y0)
+    {
+      if (y0>=z0)
+      {
+        i1=1; j1=0; k1=0; i2=1; j2=1; k2=0;   // X Y Z order
       }
-    else { // x0<y0
-      if(y0<z0) { i1=0; j1=0; k1=1; i2=0; j2=1; k2=1; } // Z Y X order
-      else if(x0<z0) { i1=0; j1=1; k1=0; i2=0; j2=1; k2=1; } // Y Z X order
-      else { i1=0; j1=1; k1=0; i2=1; j2=1; k2=0; } // Y X Z order
+      else
+        if (x0>=z0)
+        {
+          i1=1; j1=0; k1=0; i2=1; j2=0; k2=1; // X Z Y order
+        }
+        else
+        {
+          i1=0; j1=0; k1=1; i2=1; j2=0; k2=1; // Z X Y order
+        }
+    }
+    else
+    { // x0<y0
+      if (y0<z0)
+      {
+        i1=0; j1=0; k1=1; i2=0; j2=1; k2=1;    // Z Y X order
+      }
+      else
+        if (x0<z0)
+        {
+          i1=0; j1=1; k1=0; i2=0; j2=1; k2=1;  // Y Z X order
+        }
+        else
+        {
+           i1=0; j1=1; k1=0; i2=1; j2=1; k2=0; // Y X Z order
+        }
     }
     // A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z),
     // a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and
@@ -239,26 +268,31 @@ scalar sino_3d( scalar xin, scalar yin, scalar zin )
     int gi2 = permMod12[ii+i2+perm[jj+j2+perm[kk+k2]]];
     int gi3 = permMod12[ii+1+perm[jj+1+perm[kk+1]]];
     // Calculate the contribution from the four corners
+    scalar n0, n1, n2, n3; // Noise contributions from the four corners
     scalar t0 = 0.6f - x0*x0 - y0*y0 - z0*z0;
-    if(t0<0) n0 = 0.0f;
+    if (t0<0)
+      n0 = 0.0f;
     else {
       t0 *= t0;
       n0 = t0 * t0 * dot3(grad3[gi0], x0, y0, z0);
     }
     scalar t1 = 0.6f - x1*x1 - y1*y1 - z1*z1;
-    if(t1<0) n1 = 0.0f;
+    if (t1<0)
+      n1 = 0.0f;
     else {
       t1 *= t1;
       n1 = t1 * t1 * dot3(grad3[gi1], x1, y1, z1);
     }
     scalar t2 = 0.6f - x2*x2 - y2*y2 - z2*z2;
-    if(t2<0) n2 = 0.0f;
+    if (t2<0)
+      n2 = 0.0f;
     else {
       t2 *= t2;
       n2 = t2 * t2 * dot3(grad3[gi2], x2, y2, z2);
     }
     scalar t3 = 0.6f - x3*x3 - y3*y3 - z3*z3;
-    if(t3<0) n3 = 0.0f;
+    if (t3<0)
+      n3 = 0.0f;
     else {
       t3 *= t3;
       n3 = t3 * t3 * dot3(grad3[gi3], x3, y3, z3);
@@ -296,12 +330,12 @@ scalar sino_4d( scalar x, scalar y, scalar z, scalar w )
     int ranky = 0;
     int rankz = 0;
     int rankw = 0;
-    if(x0 > y0) rankx++; else ranky++;
-    if(x0 > z0) rankx++; else rankz++;
-    if(x0 > w0) rankx++; else rankw++;
-    if(y0 > z0) ranky++; else rankz++;
-    if(y0 > w0) ranky++; else rankw++;
-    if(z0 > w0) rankz++; else rankw++;
+    if (x0 > y0) rankx++; else ranky++;
+    if (x0 > z0) rankx++; else rankz++;
+    if (x0 > w0) rankx++; else rankw++;
+    if (y0 > z0) ranky++; else rankz++;
+    if (y0 > w0) ranky++; else rankw++;
+    if (z0 > w0) rankz++; else rankw++;
     int i1, j1, k1, l1; // The integer offsets for the second simplex corner
     int i2, j2, k2, l2; // The integer offsets for the third simplex corner
     int i3, j3, k3, l3; // The integer offsets for the fourth simplex corner
@@ -353,31 +387,38 @@ scalar sino_4d( scalar x, scalar y, scalar z, scalar w )
     int gi4 = perm[ ii+1+perm[jj+1+perm[kk+1+perm[ll+1]]] ] % 32;
     // Calculate the contribution from the five corners
     scalar t0 = 0.6f - x0*x0 - y0*y0 - z0*z0 - w0*w0;
-    if(t0<0) n0 = 0.0f;
-    else {
+    if (t0<0)
+      n0 = 0.0f;
+    else
+    {
       t0 *= t0;
       n0 = t0 * t0 * dot4(grad4[gi0], x0, y0, z0, w0);
     }
-   scalar t1 = 0.6f - x1*x1 - y1*y1 - z1*z1 - w1*w1;
-    if(t1<0) n1 = 0.0f;
-    else {
+    scalar t1 = 0.6f - x1*x1 - y1*y1 - z1*z1 - w1*w1;
+    if (t1<0)
+      n1 = 0.0f;
+    else
+    {
       t1 *= t1;
       n1 = t1 * t1 * dot4(grad4[gi1], x1, y1, z1, w1);
     }
-   scalar t2 = 0.6f - x2*x2 - y2*y2 - z2*z2 - w2*w2;
-    if(t2<0) n2 = 0.0f;
+    scalar t2 = 0.6f - x2*x2 - y2*y2 - z2*z2 - w2*w2;
+    if (t2<0)
+      n2 = 0.0f;
     else {
       t2 *= t2;
       n2 = t2 * t2 * dot4(grad4[gi2], x2, y2, z2, w2);
     }
-   scalar t3 = 0.6f - x3*x3 - y3*y3 - z3*z3 - w3*w3;
-    if(t3<0) n3 = 0.0f;
+    scalar t3 = 0.6f - x3*x3 - y3*y3 - z3*z3 - w3*w3;
+    if (t3<0)
+      n3 = 0.0f;
     else {
       t3 *= t3;
       n3 = t3 * t3 * dot4(grad4[gi3], x3, y3, z3, w3);
     }
-   scalar t4 = 0.6f - x4*x4 - y4*y4 - z4*z4 - w4*w4;
-    if(t4<0) n4 = 0.0f;
+    scalar t4 = 0.6f - x4*x4 - y4*y4 - z4*z4 - w4*w4;
+    if (t4<0)
+      n4 = 0.0f;
     else {
       t4 *= t4;
       n4 = t4 * t4 * dot4(grad4[gi4], x4, y4, z4, w4);
