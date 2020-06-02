@@ -32,9 +32,6 @@ extern scalar sino_4d( scalar x, scalar y, scalar z, scalar w );
 extern scalar sino_2d_4o( scalar xin, scalar yin );
 extern scalar sino_3d_4o( scalar xin, scalar yin, scalar zin );
 
-extern int* perm;
-extern int* permMod12;
-
 #ifdef __cplusplus
 }
 #endif
