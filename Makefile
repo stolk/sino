@@ -1,16 +1,21 @@
-CC=clang-3.8
+CC=clang-8
 #CC=gcc
 
 testsino: sino.c testsino.c write_pgm.h
 	$(CC) -O3 -Weverything -Wno-missing-braces -ffast-math -std=gnu99 sino.c testsino.c -o testsino -lm
 
+testsino_colour: sino.c testsino_colour.c write_pgm.h
+	$(CC) -O3 -Weverything -Wno-missing-braces -ffast-math -std=gnu99 sino.c testsino_colour.c -o testsino_colour -lm
 
 # Test run produces 512 frames of 512x512 pixels that are assembled into an animated gif.
 # Each frame is a z-slice through a 3D noise volume.
-run: testsino
-	perf stat ./testsino 256
-	convert -delay 3 -loop -1 out????.pgm images/anim.gif
+run: testsino_colour
+	perf stat ./testsino_colour 192
+	convert -delay 3 -loop -1 out00??.pgm images/anim.gif
 	rm -f out????.pgm
+
+images/combined.gif:
+	convert -delay 3 -loop -1 combined/out*ppm images/combined.gif
 
 
 testsimd: testsimd.c sino_3d.ispc sino.c

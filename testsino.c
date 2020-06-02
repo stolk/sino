@@ -24,7 +24,17 @@ static void do_frame( int nr, scalar*im, int sz )
 	for ( int y=0; y<sz; ++y )
 		for ( int x=0; x<sz; ++x )
 		{
+#if 0
+			scalar v = sino_3d( x * f0, y * f0, z );	// -1 .. 1
+#elif 1
 			scalar v = sino_3d_4o( x * f0, y * f0, z );	// -1 .. 1
+#else
+			scalar ox = sino_3d_4o( x * f0, y * f0, 0 );	// -1 .. 1
+			scalar oy = sino_3d_4o( x * f0, y * f0, 1 );	// -1 .. 1
+			scalar xx = x + 16*ox;
+			scalar yy = y + 16*oy;
+			scalar v = sino_3d_4o( xx * f0, yy * f0, z );	// -1 .. 1
+#endif
 			*writer++ = ( v + 1.0f ) / ( 2.0f );		//  0 .. 1
 		}
 }
