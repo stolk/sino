@@ -134,7 +134,6 @@ static __inline__ int fastfloor( scalar x )
 
 scalar sino_2d( scalar xin, scalar yin )
 {
-    scalar n0, n1, n2; // Noise contributions from the three corners
     // Skew the input space to determine which simplex cell we're in
     scalar s = ( xin + yin ) * F2; // Hairy factor for 2D
     int i = fastfloor( xin + s );
@@ -169,27 +168,12 @@ scalar sino_2d( scalar xin, scalar yin )
     int gi1 = permMod12[ ii+i1+perm[jj+j1] ];
     int gi2 = permMod12[ ii+1+perm[jj+1] ];
     // Calculate the contribution from the three corners
-    scalar t0 = 0.5f - x0*x0-y0*y0;
-    if (t0<0)
-      n0 = 0.0f;
-    else {
-      t0 *= t0;
-      n0 = t0 * t0 * dot2( grad3[gi0], x0, y0 );  // (x,y) of grad3 used for 2D gradient
-    }
-    scalar t1 = 0.5f - x1*x1-y1*y1;
-    if (t1<0)
-      n1 = 0.0f;
-    else {
-      t1 *= t1;
-      n1 = t1 * t1 * dot2( grad3[gi1], x1, y1 );
-    }
-    scalar t2 = 0.5f - x2*x2-y2*y2;
-    if (t2<0)
-      n2 = 0.0f;
-    else {
-      t2 *= t2;
-      n2 = t2 * t2 * dot2( grad3[gi2], x2, y2 );
-    }
+    const scalar t0 = 0.5f - x0*x0-y0*y0;
+    const scalar t1 = 0.5f - x1*x1-y1*y1;
+    const scalar t2 = 0.5f - x2*x2-y2*y2;
+    const scalar n0 = t0<0 ? 0 : t0*t0*t0*t0 * dot2( grad3[gi0], x0, y0 );
+    const scalar n1 = t1<0 ? 0 : t1*t1*t1*t1 * dot2( grad3[gi1], x1, y1 );
+    const scalar n2 = t2<0 ? 0 : t2*t2*t2*t2 * dot2( grad3[gi2], x2, y2 );
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to return values in the interval [-1,1].
     return 70.0f * ( n0 + n1 + n2 );
@@ -263,40 +247,19 @@ scalar sino_3d( scalar xin, scalar yin, scalar zin )
     int ii = i & 255;
     int jj = j & 255;
     int kk = k & 255;
-    int gi0 = permMod12[ii+perm[jj+perm[kk]]];
+    int gi0 = permMod12[ii+   perm[jj+   perm[kk   ]]];
     int gi1 = permMod12[ii+i1+perm[jj+j1+perm[kk+k1]]];
     int gi2 = permMod12[ii+i2+perm[jj+j2+perm[kk+k2]]];
-    int gi3 = permMod12[ii+1+perm[jj+1+perm[kk+1]]];
+    int gi3 = permMod12[ii+1+ perm[jj+1+ perm[kk+1 ]]];
     // Calculate the contribution from the four corners
-    scalar n0, n1, n2, n3; // Noise contributions from the four corners
-    scalar t0 = 0.6f - x0*x0 - y0*y0 - z0*z0;
-    if (t0<0)
-      n0 = 0.0f;
-    else {
-      t0 *= t0;
-      n0 = t0 * t0 * dot3(grad3[gi0], x0, y0, z0);
-    }
-    scalar t1 = 0.6f - x1*x1 - y1*y1 - z1*z1;
-    if (t1<0)
-      n1 = 0.0f;
-    else {
-      t1 *= t1;
-      n1 = t1 * t1 * dot3(grad3[gi1], x1, y1, z1);
-    }
-    scalar t2 = 0.6f - x2*x2 - y2*y2 - z2*z2;
-    if (t2<0)
-      n2 = 0.0f;
-    else {
-      t2 *= t2;
-      n2 = t2 * t2 * dot3(grad3[gi2], x2, y2, z2);
-    }
-    scalar t3 = 0.6f - x3*x3 - y3*y3 - z3*z3;
-    if (t3<0)
-      n3 = 0.0f;
-    else {
-      t3 *= t3;
-      n3 = t3 * t3 * dot3(grad3[gi3], x3, y3, z3);
-    }
+    const scalar t0 = 0.6f - x0*x0 - y0*y0 - z0*z0;
+    const scalar t1 = 0.6f - x1*x1 - y1*y1 - z1*z1;
+    const scalar t2 = 0.6f - x2*x2 - y2*y2 - z2*z2;
+    const scalar t3 = 0.6f - x3*x3 - y3*y3 - z3*z3;
+    const scalar n0 = t0 < 0 ? 0 : t0*t0*t0*t0 * dot3(grad3[gi0], x0, y0, z0);
+    const scalar n1 = t1 < 0 ? 0 : t1*t1*t1*t1 * dot3(grad3[gi1], x1, y1, z1);
+    const scalar n2 = t2 < 0 ? 0 : t2*t2*t2*t2 * dot3(grad3[gi2], x2, y2, z2);
+    const scalar n3 = t3 < 0 ? 0 : t3*t3*t3*t3 * dot3(grad3[gi3], x3, y3, z3);
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to stay just inside [-1,1]
     return 32.0f * ( n0 + n1 + n2 + n3 );
