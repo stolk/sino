@@ -436,3 +436,40 @@ scalar sino_3d_4o( scalar x, scalar y, scalar z )
 	return sample;
 }
 
+int sino_cycle_len = 64;
+
+static int sino_cycle_num = -1;
+static scalar frm[3][3];
+
+void sino_2d_next_cycle(void)
+{
+	sino_cycle_num++;
+	const scalar ang = M_PI * 2 * sino_cycle_num / sino_cycle_len;
+	frm[0][0] = cosf(ang);
+	frm[0][1] = sinf(ang);
+	frm[0][2] = 0;
+	frm[1][0] = -sinf(ang);
+	frm[1][1] = cosf(ang);
+	frm[1][2] = 0;
+	frm[2][0] = 0;
+	frm[2][1] = 0;
+	frm[2][2] = 1;
+}
+
+scalar sino_2d_cyclic_2o( scalar yin, scalar zin )
+{
+	const scalar xin = 0.1f;
+	const scalar x = ( xin * frm[0][0] + yin * frm[1][0] + zin * frm[2][0] );
+	const scalar y = ( xin * frm[0][1] + yin * frm[1][1] + zin * frm[2][1] );
+	const scalar z = ( xin * frm[0][2] + yin * frm[1][2] + zin * frm[2][2] );
+	const scalar f0 = 1.0f;
+	const scalar f1 = 2.0f;
+	const scalar a0 = 1.0f;
+	const scalar a1 = 0.5f;
+	const scalar v0 = a0 * sino_3d( x * f0 , y * f0, z * f0 );
+	const scalar v1 = a1 * sino_3d( x * f1 , y * f1, z * f1 );
+	const scalar v = ( v0 + v1 ); // -1.5 .. 1.5
+	const scalar sample = v / 1.5f;
+	return sample;
+}
+
