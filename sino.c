@@ -391,6 +391,22 @@ scalar sino_4d( scalar x, scalar y, scalar z, scalar w )
 }
 
 
+// two octave version
+scalar sino_2d_2o( scalar x, scalar y )
+{
+	const float f0 = 1.0f;
+	const float f1 = 2.0f;
+	const float a0 = 1.0f;
+	const float a1 = 0.5f;
+
+	const scalar v0 = a0 * sino_2d( x * f0 , y * f0 );
+	const scalar v1 = a1 * sino_2d( x * f1 , y * f1 );
+	const scalar v = ( v0 + v1 ); // -1.5 .. 1.5
+	const scalar sample = v / 1.5f;
+	return sample;
+}
+
+
 // four octave version
 scalar sino_2d_4o( scalar x, scalar y )
 {

@@ -1,4 +1,4 @@
-#sino - a Simplex Noise implementation in C.
+# sino - a Simplex Noise implementation in C.
 
 This is a C-port of the [OpenSimplex.java code by Stefan Gustavson](http://webstaff.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java).
 

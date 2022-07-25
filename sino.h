@@ -28,6 +28,9 @@ extern scalar sino_2d( scalar xin, scalar yin );
 extern scalar sino_3d( scalar xin, scalar yin, scalar zin );
 extern scalar sino_4d( scalar x, scalar y, scalar z, scalar w );
 
+// two octave version.
+extern scalar sino_2d_2o( scalar xin, scalar yin );
+
 // four octave versions.
 extern scalar sino_2d_4o( scalar xin, scalar yin );
 extern scalar sino_3d_4o( scalar xin, scalar yin, scalar zin );
