@@ -474,7 +474,7 @@ void sino_2d_next_cycle(void)
 
 scalar sino_2d_cyclic_2o( scalar yin, scalar zin )
 {
-	const scalar xin = 0.1f;
+	const scalar xin = 0.0f;
 	const scalar x = ( xin * frm[0][0] + yin * frm[1][0] + zin * frm[2][0] );
 	const scalar y = ( xin * frm[0][1] + yin * frm[1][1] + zin * frm[2][1] );
 	const scalar z = ( xin * frm[0][2] + yin * frm[1][2] + zin * frm[2][2] );
