@@ -458,13 +458,12 @@ static int sino_cycle_num = -1;
 static float cycle_cosa = 1.0f;
 static float cycle_sina = 0.0f;
 
-void sino_2d_next_cycle(void)
+void sino_next_cycle(void)
 {
 	sino_cycle_num++;
 	const scalar ang = M_PI * 2 * sino_cycle_num / sino_cycle_len;
 	cycle_cosa = cosf(ang);
 	cycle_sina = sinf(ang);
-	fprintf(stderr, "ang %f\n", ang);
 }
 
 scalar sino_2d_cyclic_2o( scalar xx, scalar yy )
@@ -478,6 +477,23 @@ scalar sino_2d_cyclic_2o( scalar xx, scalar yy )
 	const scalar a1 = 0.5f;
 	const scalar v0 = a0 * sino_3d( x * f0 , y * f0, z * f0 );
 	const scalar v1 = a1 * sino_3d( x * f1 , y * f1, z * f1 );
+	const scalar v = ( v0 + v1 ); // -1.5 .. 1.5
+	const scalar sample = v / 1.5f;
+	return sample;
+}
+
+scalar sino_3d_cyclic_2o(scalar xx, scalar yy, scalar zz)
+{
+	const scalar x =  cycle_cosa * xx;
+	const scalar y = -cycle_sina * xx;
+	const scalar z = yy;
+	const scalar w = zz;
+	const scalar f0 = 1.0f;
+	const scalar f1 = 2.0f;
+	const scalar a0 = 1.0f;
+	const scalar a1 = 0.5f;
+	const scalar v0 = a0 * sino_4d( x * f0 , y * f0, z * f0, w * f0 );
+	const scalar v1 = a1 * sino_4d( x * f1 , y * f1, z * f1, w * f1 );
 	const scalar v = ( v0 + v1 ); // -1.5 .. 1.5
 	const scalar sample = v / 1.5f;
 	return sample;

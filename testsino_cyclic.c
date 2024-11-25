@@ -17,7 +17,7 @@ static void do_frame( int nr, scalar*im, int sz )
 	// Set the frequency
 	const float f0 = 1.0f / sz;
 
-	sino_2d_next_cycle();
+	sino_next_cycle();
 
 	// Generate a 2d image.
 	for ( int y=-sz/2; y<sz/2; ++y )
