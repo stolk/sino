@@ -455,29 +455,23 @@ scalar sino_3d_4o( scalar x, scalar y, scalar z )
 int sino_cycle_len = 64;
 
 static int sino_cycle_num = -1;
-static scalar frm[3][3];
+static float cycle_cosa = 1.0f;
+static float cycle_sina = 0.0f;
 
 void sino_2d_next_cycle(void)
 {
 	sino_cycle_num++;
 	const scalar ang = M_PI * 2 * sino_cycle_num / sino_cycle_len;
-	frm[0][0] = cosf(ang);
-	frm[0][1] = sinf(ang);
-	frm[0][2] = 0;
-	frm[1][0] = -sinf(ang);
-	frm[1][1] = cosf(ang);
-	frm[1][2] = 0;
-	frm[2][0] = 0;
-	frm[2][1] = 0;
-	frm[2][2] = 1;
+	cycle_cosa = cosf(ang);
+	cycle_sina = sinf(ang);
+	fprintf(stderr, "ang %f\n", ang);
 }
 
-scalar sino_2d_cyclic_2o( scalar yin, scalar zin )
+scalar sino_2d_cyclic_2o( scalar xx, scalar yy )
 {
-	const scalar xin = 0.0f;
-	const scalar x = ( xin * frm[0][0] + yin * frm[1][0] + zin * frm[2][0] );
-	const scalar y = ( xin * frm[0][1] + yin * frm[1][1] + zin * frm[2][1] );
-	const scalar z = ( xin * frm[0][2] + yin * frm[1][2] + zin * frm[2][2] );
+	const scalar x =  cycle_cosa * xx;
+	const scalar y = -cycle_sina * xx;
+	const scalar z = yy;
 	const scalar f0 = 1.0f;
 	const scalar f1 = 2.0f;
 	const scalar a0 = 1.0f;

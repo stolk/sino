@@ -19,7 +19,7 @@ testsino_cyclic: sino.c testsino_cyclic.c write_pgm.h
 
 run: testsino_cyclic
 	./testsino_cyclic 192
-	convert -delay 3 -loop -1 out00??.ppm images/cyclic.gif
+	convert -delay 3 -loop -1 out0???.ppm images/cyclic.gif
 
 # Test run produces 512 frames of 512x512 pixels that are assembled into an animated gif.
 # Each frame is a z-slice through a 3D noise volume.

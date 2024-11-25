@@ -15,7 +15,7 @@ static void do_frame( int nr, scalar*im, int sz )
 	scalar* writer = im;
 
 	// Set the frequency
-	const float f0 = 1.0f / 256 * 3;
+	const float f0 = 1.0f / sz;
 
 	sino_2d_next_cycle();
 
@@ -23,9 +23,10 @@ static void do_frame( int nr, scalar*im, int sz )
 	for ( int y=-sz/2; y<sz/2; ++y )
 		for ( int x=-sz/2; x<sz/2; ++x )
 		{
-			const scalar warpx = 10.0f * sino_2d_cyclic_2o( x * f0, y * f0 + 3.12345f );
-			const scalar warpy = 10.0f * sino_2d_cyclic_2o( x * f0, y * f0 - 4.98765f );
-			scalar v = sino_2d_cyclic_2o( (x+warpx) * f0, (y+warpy) * f0 );
+			const float ws = sz / 3.0f;
+			const scalar warpx = ws * sino_2d_cyclic_2o( 1.5f + x * f0, y * f0 + 3.12345f );
+			const scalar warpy = ws * sino_2d_cyclic_2o( 1.5f + x * f0, y * f0 - 4.98765f );
+			scalar v = sino_2d_cyclic_2o( 1.5f + (x+warpx) * f0, (y+warpy) * f0 );
 			assert(v>=-1 && v<=1);
 			*writer++ = ( v + 1.0f ) / ( 2.0f );		//  0 .. 1
 		}
@@ -46,7 +47,7 @@ int main( int argc, char* argv[] )
 	const size_t datasz = ( size_t ) ( sz * sz ) * sizeof( scalar );
 	scalar* im = (scalar*) malloc( datasz );
 
-	const int cnt = 100;
+	const int cnt = 300;
 	sino_cycle_len = cnt;
 
 	for ( int frame=0; frame<cnt; ++frame )

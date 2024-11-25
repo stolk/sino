@@ -38,7 +38,7 @@ extern scalar sino_3d_4o( scalar xin, scalar yin, scalar zin );
 // Cyclical version for looped animations.
 extern int sino_cycle_len;
 extern void sino_2d_next_cycle( void );
-extern scalar sino_2d_cyclic_2o( scalar xin, scalar yin );
+extern scalar sino_2d_cyclic_2o( scalar xx, scalar yy );
 
 
 #ifdef __cplusplus

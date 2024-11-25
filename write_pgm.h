@@ -1,5 +1,5 @@
 
-static void write_pgm( FILE*f, scalar* im, int sz )
+void write_pgm( FILE*f, scalar* im, int sz )
 {
 	const size_t datasz = (size_t) ( sz * sz );
 	unsigned char* data = ( unsigned char* ) malloc( datasz );
@@ -277,7 +277,7 @@ static unsigned char viridis[256][3] =
 };
 
 
-static void write_ppm( FILE* f, scalar* im, int sz )
+void write_ppm( FILE* f, scalar* im, int sz )
 {
 	const size_t datasz = (size_t) ( sz * sz * 3 );
 	unsigned char* data = ( unsigned char* ) malloc( datasz );
