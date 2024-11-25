@@ -1,5 +1,4 @@
-CC=clang-13
-#CC=gcc
+CC?=clang-19
 
 
 testsino: sino.c testsino.c write_pgm.h
