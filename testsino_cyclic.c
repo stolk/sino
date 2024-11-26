@@ -17,8 +17,6 @@ static void do_frame( int nr, scalar*im, int sz )
 	// Set the frequency
 	const float f0 = 1.0f / sz;
 
-	sino_next_cycle();
-
 	// Generate a 2d image.
 	for ( int y=-sz/2; y<sz/2; ++y )
 		for ( int x=-sz/2; x<sz/2; ++x )
@@ -48,10 +46,11 @@ int main( int argc, char* argv[] )
 	scalar* im = (scalar*) malloc( datasz );
 
 	const int cnt = 300;
-	sino_cycle_len = cnt;
 
 	for ( int frame=0; frame<cnt; ++frame )
 	{
+		sino_cycle_set_phase(frame / (float)cnt);
+
 #if !defined(BENCHMARK)
 		char fname[128];
 		snprintf( fname, sizeof( fname ), "out%04d.ppm", frame );

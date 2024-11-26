@@ -452,16 +452,12 @@ scalar sino_3d_4o( scalar x, scalar y, scalar z )
 	return sample;
 }
 
-int sino_cycle_len = 64;
-
-static int sino_cycle_num = -1;
 static float cycle_cosa = 1.0f;
 static float cycle_sina = 0.0f;
 
-void sino_next_cycle(void)
+void sino_cycle_set_phase(float t)
 {
-	sino_cycle_num++;
-	const scalar ang = M_PI * 2 * sino_cycle_num / sino_cycle_len;
+	const scalar ang = M_PI * 2 * t;
 	cycle_cosa = cosf(ang);
 	cycle_sina = sinf(ang);
 }
